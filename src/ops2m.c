@@ -1,10 +1,26 @@
-#include <ctype.h>
+/*
+ * ops2m.c - decrypt/encrypt config file of OPS2M demo discs
+ *
+ * Copyright (C) 2006, 2009 misfire <misfire@xploderfreax.de>
+ *
+ * ops2m is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ops2m is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ops2m.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mytypes.h"
 
-// Application's name and current version
 #define APP_NAME	"ops2m"
 #define APP_VERSION	"1.1"
 
@@ -14,13 +30,7 @@ enum {
 	MODE_ENC_OLD
 };
 
-void ShowBanner(void)
-{
-	printf("OPS2M Config File Cryptor v%s\n", APP_VERSION);
-	printf("Copyright (C) 2006 misfire\n\n");
-}
-
-void ShowUsage(void)
+static void show_usage(void)
 {
 	printf("Usage: %s <input file> <output file> [options]\n", APP_NAME);
 	printf(" Decrypts/encrypts the config file of OPS2M demo discs (\\SCEE_DD\\CONFIG.TXT)\n");
@@ -29,15 +39,15 @@ void ShowUsage(void)
 	printf("  -e\tEncrypt using old scheme\n");
 }
 
-void decrypt_old(u8 *buf, int size)
+static void decrypt_old(unsigned char *buf, int size)
 {
-	char key[] = "SCEEDEMO2DISC"; // Initial key
+	char key[] = "SCEEDEMO2DISC"; /* Initial key */
 	const int keylen = strlen(key);
 	int i, j;
 
 	for (i = 0, j = 0; i < size; i++, j++) {
 		if (j == keylen) {
-			// New key = previous decrypted block
+			/* New key = previous decrypted block */
 			memcpy(key, &buf[i-keylen], keylen);
 			j = 0;
 		}
@@ -45,16 +55,16 @@ void decrypt_old(u8 *buf, int size)
 	}
 }
 
-void encrypt_old(u8 *buf, int size)
+static void encrypt_old(unsigned char *buf, int size)
 {
-	char key[] = "SCEEDEMO2DISC"; // Initial key
+	char key[] = "SCEEDEMO2DISC"; /* Initial key */
 	const int keylen = strlen(key);
-	u8 tmp[keylen];
+	unsigned char tmp[keylen];
 	int i, j;
 
 	for (i = 0, j = 0; i < size; i++, j++) {
 		if (j == keylen) {
-			// New key = previous block
+			/* New key = previous block */
 			memcpy(key, tmp, keylen);
 			j = 0;
 		}
@@ -63,9 +73,9 @@ void encrypt_old(u8 *buf, int size)
 	}
 }
 
-void crypt_new(u8 *buf, int size)
+static void crypt_new(unsigned char *buf, int size)
 {
-	const char key[] = "Sir Robert McAlpine Fine Cranes";
+	static const char key[] = "Sir Robert McAlpine Fine Cranes";
 	int i;
 
 	for (i = 0; i < size; i++)
@@ -75,20 +85,17 @@ void crypt_new(u8 *buf, int size)
 int main(int argc, char *argv[])
 {
 	FILE *fp;
-	u8 *buf;
+	unsigned char *buf;
 	int filesize;
 	int mode = MODE_NEW;
 
-	ShowBanner();
-
-	// Check arguments
 	if (argc < 3) {
-		ShowUsage();
-		return -1;
+		show_usage();
+		return EXIT_FAILURE;
 	}
 
 	if ((argc == 4) && (argv[3][0] == '-')) {
-		switch (tolower(argv[3][1])) {
+		switch (argv[3][1]) {
 			case 'd':
 				mode = MODE_DEC_OLD;
 				break;
@@ -98,62 +105,51 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	// Open input file
 	fp = fopen(argv[1], "rb");
 	if (fp == NULL) {
-		fprintf(stderr, "Error: Can't open file '%s' for reading\n", argv[1]);
-		return -2;
+		fprintf(stderr, "Error: could not open input file '%s'\n", argv[1]);
+		return EXIT_FAILURE;
 	}
 
-	// Get size of input file
 	fseek(fp, 0, SEEK_END);
 	filesize = ftell(fp);
 
-	// Allocate memory for file contents
-	buf = (u8*)malloc(filesize);
+	buf = (unsigned char*)malloc(filesize);
 	if (buf == NULL) {
-		fprintf(stderr, "Error: Unable to allocate %i bytes\n", filesize);
+		fprintf(stderr, "Error: could not allocate %i bytes\n", filesize);
 		fclose(fp);
-		return -3;
+		return EXIT_FAILURE;
 	}
 
-	// Read from input file into buffer
 	fseek(fp, 0, SEEK_SET);
-	fread(buf, filesize, 1, fp);
-	fclose(fp);
+	if (fread(buf, filesize, 1, fp) != 1) {
+		fprintf(stderr, "Error: could not read from input file\n");
+		fclose(fp);
+		return EXIT_FAILURE;
+	}
 
-	// Open output file
+	fclose(fp);
 	fp = fopen(argv[2], "wb");
 	if (fp == NULL) {
-		fprintf(stderr, "Error: Can't open file '%s' for writing\n", argv[2]);
-		return -4;
+		fprintf(stderr, "Error: could not open output file '%s'\n", argv[2]);
+		return EXIT_FAILURE;
 	}
 
-	// Decrypt/encrypt
 	switch (mode) {
-		case MODE_NEW:
-			printf("Using new scheme.\nDecrypting/encrypting file... ");
-			crypt_new(buf, filesize);
-			break;
-
-		case MODE_DEC_OLD:
-			printf("Using old scheme.\nDecrypting file... ");
-			decrypt_old(buf, filesize);
-			break;
-
-		case MODE_ENC_OLD:
-			printf("Using old scheme.\nEncrypting file... ");
-			encrypt_old(buf, filesize);
-			break;
+	case MODE_NEW:
+		crypt_new(buf, filesize);
+		break;
+	case MODE_DEC_OLD:
+		decrypt_old(buf, filesize);
+		break;
+	case MODE_ENC_OLD:
+		encrypt_old(buf, filesize);
+		break;
 	}
 
-	// Write result to output file
 	fwrite(buf, filesize, 1, fp);
 	fclose(fp);
 	free(buf);
 
-	printf("Done!\n");
-	printf("File size = %i bytes\n", filesize);
-
-	return 0;
+	return EXIT_SUCCESS;
 }
