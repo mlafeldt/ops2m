@@ -4,7 +4,7 @@
 ---================================---
 
 
-Welcome to ops2m! This program will decrypt/encrypt the config files of OPS2M
+Welcome to ops2m! This program will decrypt/encrypt the config file of OPS2M
 demo discs.
 
 
@@ -42,7 +42,7 @@ $ cd build
 $ cmake ../src/
 $ make
 
-To install ps2logo:
+To install ops2m:
 # make install
 
 
@@ -52,8 +52,8 @@ To install ps2logo:
 
 usage: ops2m <input file> <output file> [-d|-e]
 
-Decrypt encrypted config file <input file> to <output file> using new scheme
-(file SCEE_DD/CONFIG.TXT).
+This will decrypt or encrypt the config file <input file> to <output file> using
+the new scheme (file SCEE_DD/CONFIG.TXT, symmetric cipher).
 
 options:
 -d decrypt using old scheme (file SCEE_DD/CONFIG.DD2)
