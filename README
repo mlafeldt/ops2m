@@ -1,0 +1,86 @@
+---=============================---
+   ops2m - OPS2M Config Cryptor
+   Copyright (C) 2006, 2009 misfire
+---================================---
+
+
+Welcome to ops2m! This program will decrypt/encrypt the config files of OPS2M
+demo discs.
+
+
+---============---
+   Version history
+---===============---
+
+v1.1 (Jul 26 2009)
+* Initial public release
+
+v1.0 (2006)
+* Private build
+
+
+---========---
+   About ops2m
+---===========---
+
+All OPS2M demo discs contain an encrypted config file that determines how the
+demo's GUI looks like (menus, colors, selectable games/videos etc.) and how the
+playable games are started (path to ELF, IOP image to use, play time etc.). The
+config file is named SCEE_DD/CONFIG.TXT or SCEE_DD/CONFIG.DD2 (older demos).
+
+You can use ops2m to decrypt/modify/encrypt those config files.
+
+
+---==---
+   Build
+---=====---
+
+To compile ops2m, you need CMake and a C compiler like gcc.
+I recommend doing an out-of-source build:
+$ mkdir build
+$ cd build
+$ cmake ../src/
+$ make
+
+To install ps2logo:
+# make install
+
+
+---==---
+   Usage
+---=====---
+
+usage: ops2m <input file> <output file> [-d|-e]
+
+Decrypt encrypted config file <input file> to <output file> using new scheme
+(file SCEE_DD/CONFIG.TXT).
+
+options:
+-d decrypt using old scheme (file SCEE_DD/CONFIG.DD2)
+-e encrypt using old scheme (file SCEE_DD/CONFIG.DD2)
+
+
+---=======---
+   Disclaimer
+---==========---
+
+THIS PROGRAM IS NOT LICENSED, ENDORSED, NOR SPONSORED BY SONY COMPUTER
+ENTERTAINMENT, INC. ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
+
+ops2m comes with ABSOLUTELY NO WARRANTY. It is covered by the GNU General
+Public License. Please see file COPYING for further information.
+
+
+---====---
+   Contact
+---=======---
+
+misfire [AT] xploderfreax [DOT] de
+
+If you enjoy ops2m, please consider a PayPal donation to my e-mail address
+above. Thank you.
+
+
+---======================---
+   HACKING NEEDS TO BE FREE!
+---=========================---

@@ -30,15 +30,6 @@ enum {
 	MODE_ENC_OLD
 };
 
-static void show_usage(void)
-{
-	printf("Usage: %s <input file> <output file> [options]\n", APP_NAME);
-	printf(" Decrypts/encrypts the config file of OPS2M demo discs (\\SCEE_DD\\CONFIG.TXT)\n");
-	printf(" Options are:\n");
-	printf("  -d\tDecrypt using old scheme (\\SCEE_DD\\CONFIG.DD2)\n");
-	printf("  -e\tEncrypt using old scheme\n");
-}
-
 static void decrypt_old(unsigned char *buf, int size)
 {
 	char key[] = "SCEEDEMO2DISC"; /* Initial key */
@@ -84,24 +75,24 @@ static void crypt_new(unsigned char *buf, int size)
 
 int main(int argc, char *argv[])
 {
-	FILE *fp;
-	unsigned char *buf;
+	FILE *fp = NULL;
+	unsigned char *buf = NULL;
 	int filesize;
 	int mode = MODE_NEW;
 
 	if (argc < 3) {
-		show_usage();
+		fprintf(stderr, "usage: %s <input file> <output file> [-d|-e]\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	if ((argc == 4) && (argv[3][0] == '-')) {
+	if ((argc > 3) && (argv[3][0] == '-')) {
 		switch (argv[3][1]) {
-			case 'd':
-				mode = MODE_DEC_OLD;
-				break;
-			case 'e':
-				mode = MODE_ENC_OLD;
-				break;
+		case 'd':
+			mode = MODE_DEC_OLD;
+			break;
+		case 'e':
+			mode = MODE_ENC_OLD;
+			break;
 		}
 	}
 
@@ -113,7 +104,6 @@ int main(int argc, char *argv[])
 
 	fseek(fp, 0, SEEK_END);
 	filesize = ftell(fp);
-
 	buf = (unsigned char*)malloc(filesize);
 	if (buf == NULL) {
 		fprintf(stderr, "Error: could not allocate %i bytes\n", filesize);
