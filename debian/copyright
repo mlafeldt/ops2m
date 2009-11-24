@@ -1,0 +1,17 @@
+This is a Debian prepackaged version of ops2m.
+
+Maintainer:
+	misfire <misfire@debugon.org>
+
+Copyright:
+	Copyright (C) 2006, 2009 misfire <misfire@debugon.org>
+
+License:
+
+ops2m is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+On Debian systems, the complete text of the GNU General Public License
+can be found in the file `/usr/share/common-licenses/GPL'.

@@ -1,0 +1,13 @@
+Source: ops2m
+Section: utils
+Priority: optional
+Maintainer: misfire <misfire@debugon.org>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.8.0
+Homepage: http://debugon.org/
+
+Package: ops2m
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Decrypt or encrypt OPS2M config files
+ This program will decrypt/encrypt the config file of OPS2M demo discs.
