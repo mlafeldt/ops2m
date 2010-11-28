@@ -35,15 +35,18 @@ You can use ops2m to decrypt/modify/encrypt those config files.
    Build
 ---=====---
 
-To compile ops2m, you need CMake and a C compiler like gcc.
-I recommend doing an out-of-source build:
-$ mkdir build
-$ cd build
-$ cmake ../src/
+To build ops2m, simply run:
 $ make
 
-To install ops2m:
-# make install
+Of course, you can also install it:
+$ make install
+
+CMake is supported too:
+$ mkdir build
+$ cd build/
+$ cmake ..
+$ make
+$ make install
 
 
 ---==---
